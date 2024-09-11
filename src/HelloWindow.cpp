@@ -48,8 +48,8 @@ int main() {
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", glfwGetPrimaryMonitor(), nullptr);
-    //GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
-    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
+    //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
     glfwMaximizeWindow(window);
 
     if (!window) {
@@ -70,7 +70,6 @@ int main() {
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
-
 
         display(window);
         processInput(window);          
@@ -97,5 +96,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
+    //glViewport(0, 0, width, height);
+    
 }

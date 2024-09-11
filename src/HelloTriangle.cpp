@@ -5,35 +5,35 @@
 using namespace std;
 
 #define numVAOs 1
+#define numVBOs 1
 GLuint renderingProgram;
 GLuint vao[numVAOs];
+GLuint vbo[numVBOs];
 
 const char *vertexShaderSource = "#version 410 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "void main()\n"
     "{\n"
-        "if (gl_VertexID == 0) gl_Position = vec4(0.0, 0.5, 0.0, 1.0);\n"
-        "else if (gl_VertexID == 1) gl_Position = vec4(-0.433, -0.25, 0.0, 1.0);\n"
-        "else gl_Position = vec4(0.433 , -0.25, 0.0, 1.0);\n"
+        " gl_Position = vec4(aPos, 1.0);\n"
     "}\0";
 
 const char *fragmentShaderSource = "#version 410 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+    "   FragColor = vec4(1.0f, 0.0f, 1.0f, 1.0f);\n"
     "}\n\0";
 
+
+void setUpVertices(void);
 GLuint createShaderProgram();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
-
 // Initialization function (currently empty)
 void init(){
     renderingProgram = createShaderProgram();
-    glGenVertexArrays(numVAOs, vao);
-    glBindVertexArray(vao[0]);
+    setUpVertices();
 }
 
 // Function to update the display
@@ -42,7 +42,11 @@ void display(GLFWwindow* window){
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glUseProgram(renderingProgram);  
+
+    glBindVertexArray(vao[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+
 }
 
 int main() {
@@ -59,7 +63,7 @@ int main() {
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
-    //glfwMaximizeWindow(window);
+    
 
     if (!window) {
         glfwTerminate();
@@ -95,6 +99,28 @@ int main() {
     return 0;
 }
 
+//triangle vertices
+void setUpVertices(void){
+
+    float vertexPositions[9] = {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(vao[0]);
+    glGenBuffers(1, vbo); // Generate vertex buffer object    
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+    //GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
+    //GL_STATIC_DRAW: the data is set only once and used many times.
+    //GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+}
+
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -103,7 +129,7 @@ void processInput(GLFWwindow *window)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glfwGetFramebufferSize(window, &width, &height);
+    //glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 }
 
@@ -140,6 +166,9 @@ GLuint createShaderProgram(){
     if (linked != 1) {
         cout << "linking failed" << endl;
     }
+    
+    glDeleteShader(vShader);
+    glDeleteShader(fShader);
     
     return vfProgram;
 

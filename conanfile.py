@@ -11,6 +11,7 @@ class CompressorRecipe(ConanFile):
 
     def requirements(self):
         self.requires("glm/cci.20230113")
+        self.requires("glfw/3.4")
 
     def layout(self):
         cmake_layout(self)
