@@ -20,7 +20,7 @@ void init(GLFWwindow* window){
 // Function to update the display
 void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);       
-//    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//    glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
 
     glClearColor(r, g, b, 1.0f);
     r += 0.01f;
@@ -47,8 +47,10 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    
     //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", glfwGetPrimaryMonitor(), nullptr);
     GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
+    
     //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
     glfwMaximizeWindow(window);
 

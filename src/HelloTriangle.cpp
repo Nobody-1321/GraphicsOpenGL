@@ -46,6 +46,8 @@ void display(GLFWwindow* window){
     glBindVertexArray(vao[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
+    
+    
 
 }
 
@@ -62,7 +64,7 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Triangle ", nullptr, nullptr);
     
 
     if (!window) {
@@ -110,15 +112,18 @@ void setUpVertices(void){
 
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
+
     glGenBuffers(1, vbo); // Generate vertex buffer object    
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+
     //GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
     //GL_STATIC_DRAW: the data is set only once and used many times.
     //GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
+
 }
 
 void processInput(GLFWwindow *window)
@@ -162,6 +167,7 @@ GLuint createShaderProgram(){
     glAttachShader(vfProgram, fShader);
     
     glLinkProgram(vfProgram);
+
     glGetProgramiv(vfProgram, GL_LINK_STATUS, &linked);
     if (linked != 1) {
         cout << "linking failed" << endl;

@@ -1,4 +1,4 @@
-#include <modelImporter.hpp>
+#include "../include/modelImporter.hpp"
 ModelImporter::ModelImporter() {}
 
 void ModelImporter::parseObjFile(const char* path) {

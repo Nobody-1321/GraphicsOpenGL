@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include "../private/stlHeaders.hpp"
+#include "stlHeaders.hpp"
 #include "../../../libs/soild2/SOIL2/SOIL2.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

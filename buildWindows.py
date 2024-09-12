@@ -7,7 +7,7 @@ build_dir = os.path.join(root_dir, 'build', 'Release')  # Ruta a build/Release
 
 # Comandos
 cmake_command = [
-    "cmake", "-G", "Ninja", 
+    "cmake", "-G", "Ninja",
     "-DCMAKE_TOOLCHAIN_FILE=generators\\conan_toolchain.cmake", 
     "-DCMAKE_BUILD_TYPE=Release", 
     "../.."
@@ -15,16 +15,15 @@ cmake_command = [
 
 build_command = ["ninja"]
 
-
 program_command = ["graphics.exe"]
 
 def run_command(command, cwd=None):
     """Ejecuta un comando en la terminal."""
     try:
-        result = subprocess.run(command, cwd=cwd, check=True, capture_output=True, text=True, shell=True)
-        print(result.stdout)
+        # Usar subprocess.run sin capturar la salida
+        result = subprocess.run(command, cwd=cwd, check=True, shell=True)
     except subprocess.CalledProcessError as e:
-        print(f"Error al ejecutar el comando: {e.stderr}")
+        print(f"Error al ejecutar el comando: {e}")
         raise
 
 def main():
@@ -43,9 +42,6 @@ def main():
     
     # Ejecutar el programa graphics en build/Release
     print("Ejecutando el programa graphics...")
-    print(program_command)
-    print(build_dir)
-    
     run_command(program_command, cwd=build_dir)
 
 if __name__ == "__main__":
