@@ -6,9 +6,12 @@
 #include <cmath>
 using namespace std;
 
-#define numVAOs 2
+#define numVAOs 1
 #define numVBOs 2
+
 GLuint renderingProgram;
+GLuint texture;
+
 GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
@@ -21,16 +24,20 @@ void init(){
 
     #ifdef __WIN32__
         renderingProgram = Utils::createShaderProgram(
-            ".\\shaders\\vertex_shader1.glsl",
-            ".\\shaders\\fragment_shader1.glsl");
+            ".\\shaders\\vertex_shader2.glsl",
+            ".\\shaders\\fragment_shader2.glsl");
+        
         std::cout << "Windows" << std::endl;
+        texture = Utils::loadTexture(".\\textures\\torus.jpg");
     #else
         renderingProgram = Utils::createShaderProgram(
-            "./shaders/vertex_shader1.glsl",
-            "./shaders/fragment_shader1.glsl");
+            "./shaders/vertex_shader2.glsl",
+            "./shaders/fragment_shader2.glsl");
+        
+        texture = Utils::loadTexture("./textures/sand.png");        
         std::cout << "Linux" << std::endl;
     #endif
-
+    
     setUpVertices();
 }
 
@@ -42,8 +49,11 @@ void display(GLFWwindow* window){
     glUseProgram(renderingProgram);  
     
     glBindVertexArray(vao[0]);          // Bind to VAO containing the triangle
-    glDrawArrays(GL_TRIANGLES, 0, 6);   // Draw the triangle     
-    glBindVertexArray(0);               // Unbind from the VAO
+    
+    glActiveTexture(GL_TEXTURE0);       // Activate the texture unit
+    glBindTexture(GL_TEXTURE_2D, texture); // Bind the texture to the unit
+    
+    glDrawArrays(GL_TRIANGLES, 0, 3);   // Draw the triangle     
 
 }
 
@@ -89,6 +99,9 @@ int main() {
 
     
     glfwDestroyWindow(window);
+    //glDeleteVertexArrays(1, &VAO);
+    //glDeleteBuffers(1, &VBO);
+    //glDeleteBuffers(1, &EBO);
     glfwTerminate();
     
     return 0;
@@ -96,13 +109,10 @@ int main() {
 
 void setUpVertices(void){
     //2 triangles with 3 vertices each and its color
-    float vertexPositions[36] = { 
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    float vertexPositions[24] = { 
+        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+         0.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f
     };                                                                                                             
 
     glGenVertexArrays(1, vao);;
@@ -110,15 +120,17 @@ void setUpVertices(void){
     
     glGenBuffers(1, vbo); 
     
-    
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 }
 
