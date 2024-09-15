@@ -13,6 +13,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/utils)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/soild2)
 
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/utils/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/soild2/SOIL2
+)
 
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)

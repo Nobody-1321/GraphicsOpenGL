@@ -15,7 +15,6 @@ set(MAIN_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/modelImporter.cpp
 )
 
-
 add_library(utilities STATIC ${MAIN_SOURCE_FILES})
 
 # Directorios de inclusión públicos

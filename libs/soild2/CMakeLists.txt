@@ -32,8 +32,8 @@ target_compile_options(soil3 PRIVATE
 )
 
 target_include_directories(soil3 PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SOIL2/>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common/>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SOIL2>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common>
 )
 
 target_link_libraries(soil3 PRIVATE OpenGL::GL)
