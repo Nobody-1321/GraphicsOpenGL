@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "../libs/utils/include/Utils.hpp"
+#include <Utils.hpp>
 #include <cmath>
 using namespace std;
 

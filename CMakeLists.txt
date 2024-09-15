@@ -4,10 +4,6 @@ include(${CMAKE_BINARY_DIR}/generators/conan_toolchain.cmake)
 
 project(graphics VERSION 2.0.1 LANGUAGES CXX)
 
-# Configurar compilador para salida de errores en color
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
-endif()
 
 set(LIBRARIES_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad
@@ -26,10 +22,9 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloSquare.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTriangle.cpp)
 #add_executable(${PROJECT_NAME} src/HelloGlsl.cpp)
-#add_executable(${PROJECT_NAME} src/HelloInterpolation.cpp)
+add_executable(${PROJECT_NAME} src/HelloInterpolation.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTexture.cpp)
-
-add_executable(${PROJECT_NAME} src/HelloMixTexture.cpp)
+#add_executable(${PROJECT_NAME} src/HelloMixTexture.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)

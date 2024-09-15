@@ -19,7 +19,7 @@ set(MAIN_SOURCE_FILES
 add_library(utilities STATIC ${MAIN_SOURCE_FILES})
 
 # Directorios de inclusión públicos
-target_include_directories(utilities PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/public)
+target_include_directories(utilities PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_precompile_headers(utilities PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/stlHeaders.hpp )
 

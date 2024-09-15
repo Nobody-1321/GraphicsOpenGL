@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "../libs/utils/include/Utils.hpp"
+#include <Utils.hpp>
 #include <cmath>
 using namespace std;
 
@@ -33,8 +33,8 @@ void init(){
         std::cout << "Windows" << std::endl;
     #else
         renderingProgram = Utils::createShaderProgram(
-            "./shaders/vertex_shader2.glsl",
-            "./shaders/fragment_shader2.glsl");
+            "./shaders/vertex_shader3.glsl",
+            "./shaders/fragment_shader3.glsl");
         
         texture1 = Utils::loadTexture("./textures/torus.jpg");
         texture2 = Utils::loadTexture("./textures/angry.png");        
@@ -83,7 +83,7 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Glsl ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Mix Texture ", nullptr, nullptr);
     
     if (!window) {
         glfwTerminate();
