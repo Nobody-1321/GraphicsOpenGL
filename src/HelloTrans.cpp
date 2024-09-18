@@ -2,16 +2,17 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-//#include <soild2/SOIL2/SOIL2.h>
-#include <SOIL2.hpp>
-
 #include <Utils.hpp>
 #include <cmath>
 using namespace std;
 
-#define numVAOs 2
+#define numVAOs 1
 #define numVBOs 2
+
 GLuint renderingProgram;
+GLuint texture1;
+GLuint texture2;
+
 GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
@@ -24,16 +25,22 @@ void init(){
 
     #ifdef __WIN32__
         renderingProgram = Utils::createShaderProgram(
-            ".\\shaders\\vertex_shader1.glsl",
-            ".\\shaders\\fragment_shader1.glsl");
+            ".\\shaders\\vertex_shader4.glsl",
+            ".\\shaders\\fragment_shader4.glsl");
+        
+        texture1 = Utils::loadTexture(".\\textures\\torus.jpg");
+        texture2 = Utils::loadTexture(".\\textures\\angry.png");
         std::cout << "Windows" << std::endl;
     #else
         renderingProgram = Utils::createShaderProgram(
-            "./shaders/vertex_shader1.glsl",
-            "./shaders/fragment_shader1.glsl");
+            "./shaders/vertex_shader4.glsl",
+            "./shaders/fragment_shader4.glsl");
+        
+        texture1 = Utils::loadTexture("./textures/torus.jpg");
+        texture2 = Utils::loadTexture("./textures/angry.png");        
         std::cout << "Linux" << std::endl;
     #endif
-
+    
     setUpVertices();
 }
 
@@ -42,11 +49,39 @@ void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
 
+    float timeValue = glfwGetTime(); // Get the time value
+
+    //reducir el tamaño de la imagen escalada negativo
+    float xValue = (sin(timeValue) / 2.5f) + 0.3f;  // Calculate the blue value
+    float yValue = (cos(timeValue) / 2.5f) + 0.3f;   // Calculate the red value
+    float zValue = (sin(timeValue) / 2.5f) + 0.3f; // Calculate the green value
+
+    glm::mat4 trans = glm::mat4(1.0f);
+
+    trans = glm::scale(trans, glm::vec3(0.5f, 0.5, 0.5f));
+    trans = glm::rotate(trans, (float)timeValue, glm::vec3(0.0f, 0.0f, 1.0f));
+    unsigned int transformLoc = glGetUniformLocation(renderingProgram, "transform");
+ 
     glUseProgram(renderingProgram);  
     
     glBindVertexArray(vao[0]);          // Bind to VAO containing the triangle
-    glDrawArrays(GL_TRIANGLES, 0, 6);   // Draw the triangle     
-    glBindVertexArray(0);               // Unbind from the VAO
+    
+    glActiveTexture(GL_TEXTURE0);       // Activate the texture unit
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind the texture to the unit
+    
+    glActiveTexture(GL_TEXTURE1);       // Activate the texture unit    
+    glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit 
+    
+    GLint textureLoc1 = glGetUniformLocation(renderingProgram, "texture1");
+    GLint textureLoc2 = glGetUniformLocation(renderingProgram, "texture2");
+ 
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+    glUniform1i(textureLoc1, 0);         // Set the sampler texture unit to 0
+    glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);   // Draw the triangle     
+
 
 }
 
@@ -63,7 +98,7 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Glsl ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Mix Texture ", nullptr, nullptr);
     
     if (!window) {
         glfwTerminate();
@@ -92,6 +127,9 @@ int main() {
 
     
     glfwDestroyWindow(window);
+    //glDeleteVertexArrays(1, &VAO);
+    //glDeleteBuffers(1, &VBO);
+    //glDeleteBuffers(1, &EBO);
     glfwTerminate();
     
     return 0;
@@ -99,13 +137,10 @@ int main() {
 
 void setUpVertices(void){
     //2 triangles with 3 vertices each and its color
-    float vertexPositions[36] = { 
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    float vertexPositions[24] = { 
+        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+         0.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f
     };                                                                                                             
 
     glGenVertexArrays(1, vao);;
@@ -113,15 +148,17 @@ void setUpVertices(void){
     
     glGenBuffers(1, vbo); 
     
-    
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 }
 

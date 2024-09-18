@@ -27,9 +27,10 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloSquare.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTriangle.cpp)
 #add_executable(${PROJECT_NAME} src/HelloGlsl.cpp)
-add_executable(${PROJECT_NAME} src/HelloInterpolation.cpp)
+#add_executable(${PROJECT_NAME} src/HelloInterpolation.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTexture.cpp)
 #add_executable(${PROJECT_NAME} src/HelloMixTexture.cpp)
+add_executable(${PROJECT_NAME} src/HelloTrans.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)

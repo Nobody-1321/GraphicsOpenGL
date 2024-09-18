@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(soil3 LANGUAGES CXX C VERSION 1.0.0)
+project(soil LANGUAGES CXX C VERSION 1.0.0)
 
 option(SOIL2_BUILD_TESTS "Build tests")
 
@@ -35,6 +35,8 @@ target_include_directories(soil3 PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SOIL2>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common>
 )
+
+target_include_directories(soil3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(soil3 PRIVATE OpenGL::GL)
 
