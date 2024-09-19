@@ -10,10 +10,19 @@ using namespace std;
 #define numVBOs 2
 
 GLuint renderingProgram;
-GLuint texture;
+GLuint texture1;
+GLuint texture2;
 
 GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
+
+
+glm::mat4 model;
+glm::mat4 view; 
+glm::mat4 projection;
+
+
+float aspectRatio;
 
 void setUpVertices(void);
 GLuint createShaderProgram();
@@ -24,20 +33,24 @@ void init(){
 
     #ifdef __WIN32__
         renderingProgram = Utils::createShaderProgram(
-            ".\\shaders\\vertex_shader2.glsl",
-            ".\\shaders\\fragment_shader2.glsl");
+            ".\\shaders\\vertex_shader5.glsl",
+            ".\\shaders\\fragment_shader5.glsl");
         
+        texture1 = Utils::loadTexture(".\\textures\\torus.jpg");
+        texture2 = Utils::loadTexture(".\\textures\\angry.png");
         std::cout << "Windows" << std::endl;
-        texture = Utils::loadTexture(".\\textures\\torus.jpg");
     #else
         renderingProgram = Utils::createShaderProgram(
-            "./shaders/vertex_shader2.glsl",
-            "./shaders/fragment_shader2.glsl");
+            "./shaders/vertex_shader5.glsl",
+            "./shaders/fragment_shader5.glsl");
         
-        texture = Utils::loadTexture("./textures/sand.png");        
+        texture1 = Utils::loadTexture("./textures/torus.jpg");
+        texture2 = Utils::loadTexture("./textures/angry.png");        
         std::cout << "Linux" << std::endl;
     #endif
-    
+
+
+    glViewport(0, 0, 500, 500);
     setUpVertices();
 }
 
@@ -46,17 +59,43 @@ void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
 
+    model = glm::mat4(1.0f);
+    view = glm::mat4(1.0f);
+    projection = glm::mat4(1.0f); 
+
+    model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+    //model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    model = glm::scale(model, glm::vec3(5.5f, 5.5f, 0.5f));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+
+    unsigned int modelLoc = glGetUniformLocation(renderingProgram, "model");
+    unsigned int viewLoc = glGetUniformLocation(renderingProgram, "view");
+    unsigned int projectionLoc = glGetUniformLocation(renderingProgram, "projection");
+
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
     glUseProgram(renderingProgram);  
-
-
     
-
     glBindVertexArray(vao[0]);          // Bind to VAO containing the triangle
     
     glActiveTexture(GL_TEXTURE0);       // Activate the texture unit
-    glBindTexture(GL_TEXTURE_2D, texture); // Bind the texture to the unit
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind the texture to the unit
     
+    glActiveTexture(GL_TEXTURE1);       // Activate the texture unit    
+    glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit 
+    
+    GLint textureLoc1 = glGetUniformLocation(renderingProgram, "texture1");
+    GLint textureLoc2 = glGetUniformLocation(renderingProgram, "texture2");
+ 
+    glUniform1i(textureLoc1, 0);         // Set the sampler texture unit to 0
+    glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
+
     glDrawArrays(GL_TRIANGLES, 0, 3);   // Draw the triangle     
+
 
 }
 
@@ -73,13 +112,14 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Glsl ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Mix Texture ", nullptr, nullptr);
     
     if (!window) {
         glfwTerminate();
         return -1;
     }
 
+    aspectRatio = 700.0f / 700.0f;
     
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -145,7 +185,8 @@ void processInput(GLFWwindow *window)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glfwGetFramebufferSize(window, &width, &height);
+    // Asegúrate de que el viewport cubra toda la ventana
     glViewport(0, 0, width, height);
-}
+    aspectRatio = (float)width / (float)height;
 
+}

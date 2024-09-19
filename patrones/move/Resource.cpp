@@ -24,19 +24,24 @@ Resource::Resource(Resource&& other) noexcept : data(std::move(other.data)) {
 
 // Operador de asignación por copia
 Resource& Resource::operator=(const Resource& other) {
+    
     if (this == &other) {
         return *this;  // Manejo de autoasignación
     }
+    
     data = other.data;  // Copia el vector
     std::cout << "Operador de asignación por copia llamado." << std::endl;
+   
     return *this;
 }
 
 // Operador de asignación por movimiento
 Resource& Resource::operator=(Resource&& other) noexcept {
+    
     if (this == &other) {
         return *this;  // Manejo de autoasignación
     }
+
     data = std::move(other.data);  // Transfiere la propiedad del vector
     std::cout << "Operador de asignación por movimiento llamado." << std::endl;
     return *this;

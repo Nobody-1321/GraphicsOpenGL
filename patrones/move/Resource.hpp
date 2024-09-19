@@ -1,6 +1,9 @@
+#include <array>
+#include <iostream>
 class Resource {
 private:
     std::vector<int> data;
+    std::array<int, 10> data2;
 
 public:
     // Constructor por defecto
@@ -10,10 +13,10 @@ public:
     Resource(const std::vector<int>& vec);
 
     // Constructor de copia
-    Resource(const Resource& other);
+    Resource(const Resource& other)= delete;
 
     // Constructor de movimiento
-    Resource(Resource&& other) noexcept;
+    Resource(Resource&& other) noexcept = delete;
 
     // Operador de asignación por copia
     Resource& operator=(const Resource& other);
