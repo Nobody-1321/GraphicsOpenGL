@@ -29,6 +29,7 @@ glm::vec3 cameraUp;
 float deltaTime = 1.0f;	// Time between current frame and last frame
 float lastFrame = 1.0f; // Time of last frame
 
+float Zoom = 45.0f;
 float yaw; // Iniciar con -90 grados para mirar hacia adelante
 float pitch;   // El ángulo en el eje Y (pitch)
 float lastX, lastY; // Iniciar el mouse en el centro de la pantalla
@@ -36,6 +37,7 @@ bool firstMouse;
 float sensitivity; // Sensibilidad del mouse
 
 
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void setUpVertices(void);
 GLuint createShaderProgram();
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -128,7 +130,7 @@ void display(GLFWwindow *window)
         //                   glm::vec3(0.0, 1.0, 0.0));
         
 
-        projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
 
         unsigned int modelLoc = glGetUniformLocation(renderingProgram, "model");
         unsigned int viewLoc = glGetUniformLocation(renderingProgram, "view");
@@ -184,7 +186,8 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
-    glfwSetCursorPosCallback(window, mouse_callback);  
+    glfwSetCursorPosCallback(window, mouse_callback); 
+    glfwSetScrollCallback(window, scroll_callback); 
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -333,4 +336,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     front.y = sin(glm::radians(pitch));
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(front); // Normalizar el vector para asegurar que tenga una magnitud de 1
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+    Zoom -= (float)yoffset;
+    if (Zoom < 1.0f)
+        Zoom = 1.0f;
+    if (Zoom > 45.0f)
+        Zoom = 45.0f;
 }
