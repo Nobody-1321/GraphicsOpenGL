@@ -84,7 +84,9 @@ for(int i = 0; i < 10; i++){
     model = glm::translate(model, cubePositions[i]);
     
     float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
-    model = glm::rotate(model, angle , glm::vec3(0.5f, 1.0f, 0.0f));
+    
+    model = glm::rotate(model, angle * 10000.0f  , glm::vec3(0.5f, 1.0f, 0.0f));
+    //model = glm::rotate(model, glm::radians(45.0f) , glm::vec3(0.5f, 1.0f, 0.0f));
     
     model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
     

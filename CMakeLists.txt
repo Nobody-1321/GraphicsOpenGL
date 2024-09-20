@@ -32,7 +32,9 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloMixTexture.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTrans.cpp)
 #add_executable(${PROJECT_NAME} src/HelloCoordinates.cpp)
-add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
+#add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
+#add_executable(${PROJECT_NAME} src/HelloCamera.cpp)
+add_executable(${PROJECT_NAME} src/HelloCameraAround.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)
