@@ -12,6 +12,7 @@ set(LIBRARIES_DIR
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/utils)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/soild2)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include
@@ -34,7 +35,8 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloCoordinates.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
 #add_executable(${PROJECT_NAME} src/HelloCamera.cpp)
-add_executable(${PROJECT_NAME} src/HelloCameraAround.cpp)
+#add_executable(${PROJECT_NAME} src/HelloCameraAround.cpp)
+add_executable(${PROJECT_NAME} src/HelloGui.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)
@@ -57,4 +59,4 @@ foreach(GLSL_TEX ${TEXTURE_FILES})
     file(COPY ${GLSL_TEX} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/textures)
 endforeach()
 
-target_link_libraries(${PROJECT_NAME} glfw glad OpenGL::GL glm::glm utilities soil3)
+target_link_libraries(${PROJECT_NAME} glfw glad OpenGL::GL glm::glm utilities soil3 imgui)
