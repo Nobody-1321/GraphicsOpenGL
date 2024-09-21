@@ -53,9 +53,9 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Habilitar controles de Gamepad
 
 
-    //ImGui::StyleColorsDark(); // Configura el estilo de ImGui
+    ImGui::StyleColorsDark(); // Configura el estilo de ImGui
     //ImGui::StyleColorsClassic(); // Configura el estilo de ImGui
-    ImGui::StyleColorsLight(); // Configura el estilo de ImGui
+    //ImGui::StyleColorsLight(); // Configura el estilo de ImGui
 
     // Configura el backend de ImGui para OpenGL y GLFW
     ImGui_ImplGlfw_InitForOpenGL(window, true); // El segundo parámetro install_callback = true instalará callbacks de GLFW
@@ -114,7 +114,7 @@ int main()
 
         // Renderiza la UI de ImGui
         ImGui::Render();
-        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+        glClearColor(0.4005f, 0.5588f, 0.208f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

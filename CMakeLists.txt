@@ -24,7 +24,9 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
 
-#add_executable(${PROJECT_NAME} src/HelloWindow.cpp)
+add_executable(${PROJECT_NAME} src/basic/HelloWindow.cpp)
+
+
 #add_executable(${PROJECT_NAME} src/HelloSquare.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTriangle.cpp)
 #add_executable(${PROJECT_NAME} src/HelloGlsl.cpp)
@@ -36,7 +38,7 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
 #add_executable(${PROJECT_NAME} src/HelloCamera.cpp)
 #add_executable(${PROJECT_NAME} src/HelloCameraAround.cpp)
-add_executable(${PROJECT_NAME} src/HelloGui.cpp)
+#add_executable(${PROJECT_NAME} src/HelloGui.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)

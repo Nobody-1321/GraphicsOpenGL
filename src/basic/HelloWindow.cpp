@@ -49,19 +49,16 @@ int main() {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     
     //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", glfwGetPrimaryMonitor(), nullptr);
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
-    
-    //GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
-    glfwMaximizeWindow(window);
+    //GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(700, 700, " Hello Window ", nullptr, nullptr);
 
     if (!window) {
         glfwTerminate();
         return -1;
     }
 
-    // Set the OpenGL context for the window
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwMaximizeWindow(window);
 
     // Initialize GLAD to load OpenGL functions
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -69,7 +66,6 @@ int main() {
         return -1;
     }
     
-
     // Main loop
     while (!glfwWindowShouldClose(window)) {
 
@@ -81,9 +77,8 @@ int main() {
     }
 
     // Terminate GLFW when program ends
-    glfwDestroyWindow(window);
     glfwTerminate();
-    
+   
     return 0;
 }
 
@@ -91,13 +86,4 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glfwGetFramebufferSize(window, &width, &height);
-    //glViewport(0, 0, width, height);
-    
 }
