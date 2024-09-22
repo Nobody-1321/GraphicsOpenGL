@@ -2,6 +2,7 @@
 
 ModelImporter::ModelImporter() {}
 
+
 void ModelImporter::parseObjFile(const char* path) {
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -103,6 +104,48 @@ void ModelImporter::parseObjFile(const char* path) {
                     normals.push_back(normVals[(normIdx[i] - 1) * 3 + 1]);
                     normals.push_back(normVals[(normIdx[i] - 1) * 3 + 2]);
                 }
+            }
+        }
+    }
+
+    file.close();
+}
+
+void ModelImporter::parseObjFileVer(const char* path){
+        std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open the file!" << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        std::string prefix;
+        ss >> prefix;
+
+        // Procesar los vértices (líneas que empiezan con "v")
+        if (prefix == "v") {
+            float x, y, z;
+            ss >> x >> y >> z;
+            vertVals.push_back(x);
+            vertVals.push_back(y);
+            vertVals.push_back(z);
+        }
+        // Procesar las caras (líneas que empiezan con "f")
+        else if (prefix == "f") {
+            unsigned int vertIdx[3];
+            // Leer tres índices de vértices para formar un triángulo
+            for (int i = 0; i < 3; ++i) {
+                ss >> vertIdx[i];
+            }
+
+            // Convertir los índices a coordenadas de vértices
+            for (int i = 0; i < 3; ++i) {
+                unsigned int idx = vertIdx[i] - 1; // Los índices en OBJ empiezan desde 1
+                triangleVerts.push_back(vertVals[idx * 3]);
+                triangleVerts.push_back(vertVals[idx * 3 + 1]);
+                triangleVerts.push_back(vertVals[idx * 3 + 2]);
             }
         }
     }

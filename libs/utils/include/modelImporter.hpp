@@ -15,6 +15,7 @@ private:
 public:
     ModelImporter();
     void parseObjFile(const char* path);
+    void parseObjFileVer(const char* path);
     
     int getNumVertices();
     std::vector<float> getVertices();
