@@ -4,8 +4,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <chrono>
 #include <Utils.hpp>
 #include <modelImporter.hpp>
+#include <thread>
+#include <atomic>
+
+
 
 
 using namespace std;
@@ -22,7 +27,8 @@ GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
 GLuint projLoc, mvLoc;
-int width, height;
+int width =500;
+int height = 500;
 float aspect;
 
 glm::mat4 modelMat;
@@ -31,6 +37,7 @@ glm::mat4 projectionMat;
 glm::mat4 perspectiveMat;
 
 int numVertices;
+bool resourcesLoaded  = false;
 
 void setupVertices() {
     
@@ -38,12 +45,12 @@ void setupVertices() {
 
     
     #ifdef __WIN32__
-        model.parseObjFile(".\\model\\stanford-bunny.obj");
+        //model.parseObjFile(".\\model\\stanford-bunny.obj");
         model.parseObjFileVer(".\\model\\xyzrgb_dragon.obj");
     #else
         //model.parseObjFileVer("./model/stanford-bunny.obj");
         //model.parseObjFile("./model/cat.obj");
-        //model.parseObjFileVer("./model/xyzrgb_dragon.obj");
+        model.parseObjFileVer("./model/xyzrgb_dragon.obj");
     #endif
 
 
@@ -81,8 +88,7 @@ void init(GLFWwindow *window) {
         std::cout << "Linux" << std::endl;
     #endif
 
-    
-    glfwGetFramebufferSize(window, &width, &height);
+
 
     aspect = static_cast<float>(width) / static_cast<float>(height);
 
@@ -91,13 +97,15 @@ void init(GLFWwindow *window) {
     cameraX = 0.0f; cameraY = 10.0f; cameraZ = 70.0f;
     
     setupVertices();
-}
 
+    resourcesLoaded = true;
+}
 
 void display(GLFWwindow *window, double currentTime) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//    glm::vec3 coral(1.0f, 0.5f, 0.31f);
 
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(1.0, 0.5, 0.31, 1.0);
 
     glUseProgram(renderingProgram);
 
@@ -109,7 +117,7 @@ void display(GLFWwindow *window, double currentTime) {
     viewMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
     float angle = glm::radians(90.0f);
-    modelMat = glm::rotate(glm::mat4(1.0f), -(float)angle, glm::vec3(1.0f, 0.0f, 0.0f));
+    modelMat = glm::rotate(glm::mat4(1.0f), -(float)angle, glm::vec3(0.0f, 1.0f, 0.0f));
     modelMat = glm::rotate(modelMat, -(float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));
     modelMat = glm::scale(modelMat, glm::vec3(0.5f, 0.5f, 0.5f));
 
@@ -126,8 +134,21 @@ void display(GLFWwindow *window, double currentTime) {
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
 void processInput(GLFWwindow *window);
+
+void renderLoadingScreen(GLFWwindow* loadingWindow, int width, int height) {
+    // Limpiar la pantalla de la ventana de carga
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.2f, 0.3f, 0.4f, 1.0f); // Fondo de la pantalla de carga
+
+    glViewport(0, 0, width, height);
+    
+    // Aquí puedes agregar la lógica para dibujar algún texto o símbolo de carga
+    // De momento solo pintamos el fondo.
+
+    // Intercambiar buffers
+    glfwSwapBuffers(loadingWindow);
+}
 
 int main() {
     
@@ -142,7 +163,8 @@ int main() {
 
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());    
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(500, 500, " program_2_1 ", nullptr, nullptr);
+    //GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " program_2_1 ", nullptr, nullptr);
 
     if (!window) {
         glfwTerminate();
@@ -150,7 +172,8 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    glfwMaximizeWindow(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
 
     // Initialize GLAD to load OpenGL functions
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -158,25 +181,40 @@ int main() {
         return -1;
     }
     
-    // Set the viewport size
+    while (!resourcesLoaded) {  // Mientras los recursos no se hayan cargado
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0, 0.0, 0.0, 1.0);
+        glfwSwapBuffers(window);
+        
+        glfwPollEvents(); 
+
+        init(window);
+    }
+
+    glfwSetWindowTitle(window, "Programa Renderizado");
     glViewport(0, 0, mode->width, mode->height);
+    glfwMaximizeWindow(window);
 
-    init(window);
-
-    // Main loop
     while (!glfwWindowShouldClose(window)) {
 
         display(window, glfwGetTime());
         processInput(window);          
         glfwPollEvents();
-        //glfwWaitEvents();
         glfwSwapBuffers(window); 
     }
 
-    // Terminate GLFW when program ends
+
     glfwTerminate();
    
+    
     return 0;
+}
+
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window)
