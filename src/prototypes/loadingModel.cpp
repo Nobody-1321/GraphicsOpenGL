@@ -38,8 +38,9 @@ void setupVertices() {
 
     
     #ifdef __WIN32__
-        model.parseObjFile(".\\model\\stanford-bunny.obj");
-        model.parseObjFileVer(".\\model\\xyzrgb_dragon.obj");
+        model.parseObjFile(".\\model\\cat.obj");
+        //model.parseObjFileVer(".\\model\\xyzrgb_dragon.obj");
+        //model.parseObjFileVer(".\\model\\xyzrgb_dragon.obj");
     #else
         //model.parseObjFileVer("./model/stanford-bunny.obj");
         //model.parseObjFile("./model/cat.obj");
@@ -48,7 +49,9 @@ void setupVertices() {
 
 
     numVertices = model.getNumVertices();
+    
     std::vector<float> catVertices = model.getVertices();
+    //std::vector<float> catNormals = model.getNormals();
 
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);

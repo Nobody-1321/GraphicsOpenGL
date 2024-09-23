@@ -25,8 +25,8 @@ glm::vec3 cameraPos;
 glm::vec3 cameraFront;
 glm::vec3 cameraUp;
 
-float deltaTime = 1.0f;	// Time between current frame and last frame
-float lastFrame = 1.0f; // Time of last frame
+float deltaTime = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
 
 float Zoom = 45.0f;
 float yaw; // Iniciar con -90 grados para mirar hacia adelante
@@ -55,7 +55,7 @@ glm::vec3 cubePositions[] = {
     glm::vec3(1.0f, 0.0f, 0.0f),
     glm::vec3(2.0f, 0.0f, 0.0f),
     glm::vec3(3.0f, 0.0f, 0.0f),
-    glm::vec3(2.5f, 0.0f, -5.0f),
+    glm::vec3(3.0f, 0.0f, 2.0f),
 };
 
 glm::vec4 colorValue[] ={
@@ -79,8 +79,8 @@ void init() {
         ".\\shaders\\fragment_shader7.glsl");
 
     renderingPrograms[2] = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader7.glsl",
-        ".\\shaders\\fragment_shader7.glsl");
+        ".\\shaders\\vertex_shader7_SL.glsl",
+        ".\\shaders\\fragment_shader7_SL.glsl");
 
     renderingPrograms[1] = Utils::createShaderProgram(
         ".\\shaders\\vertex_shader7_DL.glsl",
@@ -99,12 +99,11 @@ void init() {
 #endif
 
     cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    cameraFront = glm::vec3(0.0f, 0.0f, -1.0f); 
     cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     yaw = -90.0f;             // Iniciar con -90 grados para mirar hacia adelante
     pitch = 0.0f;             // El ángulo en el eje Y (pitch)
-    lastX = 400, lastY = 300; // Iniciar el mouse en el centro de la pantalla
     firstMouse = true;
     sensitivity = 0.1f; // Sensibilidad del mouse
 
@@ -115,7 +114,7 @@ void init() {
 void display(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0511f, 0.055f, 0.223f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -150,8 +149,9 @@ void display(GLFWwindow *window)
         unsigned int viewLoc = glGetUniformLocation(renderingPrograms[i], "view");
         unsigned int projectionLoc = glGetUniformLocation(renderingPrograms[i], "projection");
         unsigned int lightPosLoc = glGetUniformLocation(renderingPrograms[i], "lightPos");
+        unsigned int viewPosLoc = glGetUniformLocation(renderingPrograms[i], "viewPos");
         
-
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPos));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -166,6 +166,9 @@ void display(GLFWwindow *window)
 
 int main()
 {
+    calculateDeltaTime();
+    //center
+
 
     if (!glfwInit())
     {
@@ -189,7 +192,7 @@ int main()
     glfwMaximizeWindow(window);
 
     aspectRatio = 700.0f / 700.0f;
-
+    
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
@@ -211,6 +214,7 @@ int main()
         display(window);
         processInput(window);
         glfwPollEvents();
+
         glfwSwapBuffers(window);
     }
 
@@ -317,6 +321,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+        
+    
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;

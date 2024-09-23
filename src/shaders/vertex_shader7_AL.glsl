@@ -6,6 +6,7 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 projection;
 uniform vec4 lightColor;
+uniform vec3 viewPos;
 
 out vec4 ourColorV;
 out vec3 lightColorV;
