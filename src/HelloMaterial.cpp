@@ -4,10 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <Utils.hpp>
 #include <cmath>
+#include <Sphere.hpp>
 using namespace std;
 
 #define numVAOs 1
 #define numVBOs 2
+
+Sphere mySphere(1.0f, 72, 36);
 
 GLuint texture1;
 GLuint texture2;
@@ -51,11 +54,11 @@ void calculateDeltaTime() {
 }
 
 glm::vec3 cubePositions[] = {
+    glm::vec3(-2.0f, 0.0f, 0.0f),
     glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(1.0f, 0.0f, 0.0f),
     glm::vec3(2.0f, 0.0f, 0.0f),
-    glm::vec3(-1.0f, 0.0f, 0.0f),
-    glm::vec3(2.0f, 0.0f, 2.0f),
+    glm::vec3(4.0f, 0.0f, 0.0f),
+    glm::vec3(1.0f, 0.0f, -4.0f),
 };
 
 glm::vec4 colorValue[] ={
@@ -141,7 +144,7 @@ void display(GLFWwindow *window)
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         
 
-        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 1000.0f);
 
         unsigned int modelLoc = glGetUniformLocation(renderingPrograms[i], "model");
         unsigned int alightColor = glGetUniformLocation(renderingPrograms[i], "lightColor");
@@ -159,8 +162,9 @@ void display(GLFWwindow *window)
         glUniform4fv(objectColorVec, 1, glm::value_ptr(colorValue[i]));
         glUniform3fv(lightPosLoc, 1, glm::value_ptr(cubePositions[4]));
 
-        glBindVertexArray(vao[0]); // Bind to VAO containing the triangle
-        glDrawArrays(GL_TRIANGLES, 0, 36); // Draw the triangle
+
+        glBindVertexArray(vao[0]);
+        glDrawElements(GL_TRIANGLES, mySphere.getNumIndices(), GL_UNSIGNED_INT, 0);
     }
 }
 
@@ -229,63 +233,28 @@ int main()
 
 void setUpVertices(void)
 {
-    // Vértices con normales
-    float vertexPositions[] = {
-        // Cara trasera (normales hacia -Z)
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+    std::vector<unsigned int> indices = mySphere.getIndices();
+    std::vector<glm::vec3> vertices = mySphere.getVertices();
+    std::vector<glm::vec3> normals = mySphere.getNormals();
 
-        // Cara delantera (normales hacia +Z)
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+    std::vector<float> vertexPositions;
 
-        // Cara izquierda (normales hacia -X)
-        -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f,
-
-        // Cara derecha (normales hacia +X)
-         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-
-        // Cara inferior (normales hacia -Y)
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-         0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-
-        // Cara superior (normales hacia +Y)
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f
-    };
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        vertexPositions.push_back(vertices[i].x);
+        vertexPositions.push_back(vertices[i].y);
+        vertexPositions.push_back(vertices[i].z);
+        vertexPositions.push_back(normals[i].x);
+        vertexPositions.push_back(normals[i].y);
+        vertexPositions.push_back(normals[i].z);
+    }
 
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
 
-    glGenBuffers(1, vbo);
+    glGenBuffers(2, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexPositions.size() * sizeof(float), &vertexPositions[0], GL_STATIC_DRAW);
 
     // Posiciones del vértice
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -294,6 +263,12 @@ void setUpVertices(void)
     // Normales del vértice
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    ///configuración de los indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+
 }
 
 void processInput(GLFWwindow *window)
