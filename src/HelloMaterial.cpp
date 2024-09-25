@@ -10,7 +10,7 @@ using namespace std;
 #define numVAOs 1
 #define numVBOs 2
 
-Sphere mySphere(1.0f, 72, 36);
+Sphere mySphere(1.0f, 144, 72);
 
 GLuint texture1;
 GLuint texture2;
@@ -61,13 +61,31 @@ glm::vec3 cubePositions[] = {
     glm::vec3(1.0f, 0.0f, -4.0f),
 };
 
-glm::vec4 colorValue[] ={
-    glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
-    glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
-    glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
-    glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
-    glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), // Light
+glm::vec4 colorValue[] = {
+    glm::vec4(0.135f, 0.2225f, 0.1575f, 1.0f), // esmeralda
+    glm::vec4(0.0215f, 0.1745f, 0.0215f, 1.0f), // jade
+    glm::vec4(0.05375f, 0.05f, 0.06625f, 1.0f), // obsidiana
+    glm::vec4(0.698f, 0.096f, 0.203f, 1.0f),   // rubí (ajustado)
+    glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),         // Light
 };
+
+struct materialAttributes
+{
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
+
+//array of materials
+
+materialAttributes materials[] = {
+    {{0.135f, 0.2225f, 0.1575f}, {0.54f, 0.89f, 0.63f}, {0.316228f, 0.316228f, 0.316228f}, 32.0f},  // esmeralda
+    {{0.0215f, 0.1745f, 0.0215f}, {0.07568f, 0.61424f, 0.07568f}, {0.633f, 0.727811f, 0.633f}, 32.0f}, // jade
+    {{0.05375f, 0.05f, 0.06625f}, {0.18275f, 0.17f, 0.22525f}, {0.332741f, 0.328634f, 0.346435f}, 32.0f}, // obsidiana
+    {{0.698f, 0.096f, 0.203f}, {1.0f, 0.0f, 0.0f}, {0.633f, 0.727811f, 0.633f}, 32.0f} // rubí (ajustado)
+};
+
 
 GLuint renderingPrograms[5];
 
@@ -78,22 +96,22 @@ void init() {
         ".\\shaders\\fragment_shader7.glsl");
 
     renderingPrograms[3] = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader7.glsl",
-        ".\\shaders\\fragment_shader7.glsl");
+        ".\\shaders\\vertex_shader8_ML.glsl",
+        ".\\shaders\\fragment_shader9_ML.glsl");
 
     renderingPrograms[2] = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader7_SL.glsl",
-        ".\\shaders\\fragment_shader7_SL.glsl");
+        ".\\shaders\\vertex_shader8_ML.glsl",
+        ".\\shaders\\fragment_shader9_ML.glsl");
 
     renderingPrograms[1] = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader7_DL.glsl",
-        ".\\shaders\\fragment_shader7_DL.glsl");
+        ".\\shaders\\vertex_shader8_ML.glsl",
+        ".\\shaders\\fragment_shader9_ML.glsl");
 
     renderingPrograms[0] = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader7_AL.glsl",
-        ".\\shaders\\fragment_shader7_AL.glsl");
-    
-    std::cout << "Windows" << std::endl;
+        ".\\shaders\\vertex_shader8_ML.glsl",
+        ".\\shaders\\fragment_shader9_ML.glsl");
+
+ 
 #else
     renderingProgram = Utils::createShaderProgram(
         "./shaders/vertex_shader7.glsl",
@@ -113,6 +131,20 @@ void init() {
     setUpVertices();
 }
 
+void rotateLight() { 
+    float radius = 5.0f;  // El radio de la circunferencia
+
+    // Calcula el tiempo actual
+    float time = glfwGetTime();
+    
+    // Ajusta las posiciones en el eje X y Z para moverse en una circunferencia
+    cubePositions[4].y = cos(time) * radius;
+    cubePositions[4].z = sin(time) * radius;
+
+    // Si no deseas movimiento vertical, mantiene el valor constante en Y
+    cubePositions[4].x = 1.0f;  // Altura fija de la luz
+}
+
 // new program add
 void display(GLFWwindow *window)
 {
@@ -122,6 +154,7 @@ void display(GLFWwindow *window)
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    rotateLight();
 
     for (int i = 0; i < 5; i++)
     {
@@ -147,13 +180,40 @@ void display(GLFWwindow *window)
         projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 1000.0f);
 
         unsigned int modelLoc = glGetUniformLocation(renderingPrograms[i], "model");
-        unsigned int alightColor = glGetUniformLocation(renderingPrograms[i], "lightColor");
-        unsigned int objectColorVec = glGetUniformLocation(renderingPrograms[i], "objectColor");
         unsigned int viewLoc = glGetUniformLocation(renderingPrograms[i], "view");
         unsigned int projectionLoc = glGetUniformLocation(renderingPrograms[i], "projection");
+
+        unsigned int alightColor = glGetUniformLocation(renderingPrograms[i], "lightColor");
+        unsigned int objectColorVec = glGetUniformLocation(renderingPrograms[i], "objectColor");
         unsigned int lightPosLoc = glGetUniformLocation(renderingPrograms[i], "lightPos");
         unsigned int viewPosLoc = glGetUniformLocation(renderingPrograms[i], "viewPos");
-        
+       //material
+
+    if (i != 4){
+
+        unsigned int matAmbLoc = glGetUniformLocation(renderingPrograms[i], "material.ambient");
+        unsigned int matDiffLoc = glGetUniformLocation(renderingPrograms[i], "material.diffuse");
+        unsigned int matSpecLoc = glGetUniformLocation(renderingPrograms[i], "material.specular");
+        unsigned int matShineLoc = glGetUniformLocation(renderingPrograms[i], "material.shininess");
+
+        unsigned int lightPosLoc = glGetUniformLocation(renderingPrograms[i], "light.position");
+        unsigned int lightAmbLoc = glGetUniformLocation(renderingPrograms[i], "light.ambient");
+        unsigned int lightDiffLoc = glGetUniformLocation(renderingPrograms[i], "light.diffuse");
+        unsigned int lightSpecLoc = glGetUniformLocation(renderingPrograms[i], "light.specular");
+
+        glm::vec3 lightPosition = cubePositions[4]; // Posición fija de la luz
+
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPosition));
+        glUniform3fv(lightAmbLoc, 1, glm::value_ptr(glm::vec3(0.2f, 0.2f, 0.2f)));
+        glUniform3fv(lightDiffLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+        glUniform3fv(lightSpecLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
+        glUniform3fv(matAmbLoc, 1, glm::value_ptr(materials[i].ambient));                
+        glUniform3fv(matDiffLoc, 1, glm::value_ptr(materials[i].diffuse));
+        glUniform3fv(matSpecLoc, 1, glm::value_ptr(materials[i].specular));
+        glUniform1f(matShineLoc, materials[i].shininess);
+    }
+
         glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPos));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
