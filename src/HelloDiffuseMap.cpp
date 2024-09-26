@@ -54,34 +54,50 @@ void calculateDeltaTime() {
 
 glm::vec3 cubePositions[] = {
     glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(2.0f, 5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f, 3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),
-    glm::vec3(1.5f, 2.0f, -2.5f),
-    glm::vec3(1.5f, 0.2f, -1.5f),
-    glm::vec3(-1.3f, 1.0f, -1.5f)};
+    glm::vec3(1.0f, 2.5f, -7.5f),   // Reduciendo la distancia
+    glm::vec3(-0.75f, -1.1f, -1.25f), // Acercando este cubo
+    glm::vec3(-1.9f, -1.0f, -6.15f), // Acercando este cubo
+    glm::vec3(1.2f, -0.2f, -1.75f), // Reduciendo la separación
+    glm::vec3(-0.85f, 1.5f, -3.75f), // Acercando la posición
+    glm::vec3(0.65f, -1.0f, -1.25f), // Juntando más
+    glm::vec3(0.75f, 1.0f, -1.25f), // Reduciendo la distancia
+    glm::vec3(0.75f, 0.1f, -0.75f), // Acercando este cubo
+    glm::vec3(-0.65f, 0.5f, -10.75f) //light cube
+};
+
+void rotateLight() { 
+    float radius = 5.0f;  // El radio de la circunferencia
+
+    // Calcula el tiempo actual
+    float time = glfwGetTime();
+    
+    // Ajusta las posiciones en el eje X y Z para moverse en una circunferencia
+    cubePositions[9].y = cos(time) * radius;
+    cubePositions[9].z = sin(time) * radius;
+
+    // Si no deseas movimiento vertical, mantiene el valor constante en Y
+    cubePositions[9].x = 1.0f;  // Altura fija de la luz
+}
+
 
 void init()
 {
 
 #ifdef __WIN32__
     renderingProgram = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader6.glsl",
-        ".\\shaders\\fragment_shader6.glsl");
+        ".\\shaders\\vertex_shader9_DML.glsl",
+        ".\\shaders\\fragment_shader9_DML.glsl");
 
-    texture1 = Utils::loadTexture(".\\textures\\torus.jpg");
-    texture2 = Utils::loadTexture(".\\textures\\angry.png");
+    texture1 = Utils::loadTexture(".\\textures\\container2.png");
+    texture2 = Utils::loadTexture(".\\textures\\container2_specular.png");
     std::cout << "Windows" << std::endl;
 #else
     renderingProgram = Utils::createShaderProgram(
-        "./shaders/vertex_shader6.glsl",
-        "./shaders/fragment_shader6.glsl");
+        "./shaders/vertex_shader9_DML.glsl",
+        "./shaders/fragment_shader9_DML.glsl");
 
-    texture1 = Utils::loadTexture("./textures/torus.jpg");
-    texture2 = Utils::loadTexture("./textures/angry.png");
+    texture1 = Utils::loadTexture("./textures/container2.png");
+    texture2 = Utils::loadTexture("./textures/container2_specular.png");
     std::cout << "Linux" << std::endl;
 #endif
     
@@ -98,11 +114,23 @@ void init()
     setUpVertices();
 }
 
+
+    float r=0, g=0, b=0;
+
 // new program add
 void display(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    //glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    rotateLight();
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        r = 1.0f;
+    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+        g = 1.0f;
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        b = 1.0f;
+    
+    glClearColor(r, g, b, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -119,22 +147,36 @@ void display(GLFWwindow *window)
 
         float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
 
-        model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
+//        model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
 
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 
         
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        
-        //view = glm::lookAt(glm::vec3(0.0, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0),
-        //                   glm::vec3(0.0, 1.0, 0.0));
-        
-
-        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
+                
+        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 1000.0f);
 
         unsigned int modelLoc = glGetUniformLocation(renderingProgram, "model");
         unsigned int viewLoc = glGetUniformLocation(renderingProgram, "view");
         unsigned int projectionLoc = glGetUniformLocation(renderingProgram, "projection");
+
+        unsigned int viewPosLoc = glGetUniformLocation(renderingProgram, "viewPos");
+
+        unsigned int lightPosLoc = glGetUniformLocation(renderingProgram, "light.position");
+        unsigned int lightAmbLoc = glGetUniformLocation(renderingProgram, "light.ambient");
+        unsigned int lightDiffLoc = glGetUniformLocation(renderingProgram, "light.diffuse");
+        unsigned int lightSpecLoc = glGetUniformLocation(renderingProgram, "light.specular");
+
+
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPos));
+
+        glm::vec3 lightPosition = cubePositions[9];
+
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPosition));
+        glUniform3f(lightAmbLoc, 0.8f, 0.8f, 0.8f);
+        glUniform3f(lightDiffLoc, 0.5f, 0.5f, 0.5f);
+        glUniform3f(lightSpecLoc, 1.0f, 1.0f, 1.0f);
+
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -148,12 +190,12 @@ void display(GLFWwindow *window)
         glActiveTexture(GL_TEXTURE1);           // Activate the texture unit
         glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit
 
-        
-        GLint textureLoc1 = glGetUniformLocation(renderingProgram, "texture1");
-           GLint textureLoc2 = glGetUniformLocation(renderingProgram, "texture2");
+        GLint textureLoc1 = glGetUniformLocation(renderingProgram, "material.diffuse");
+        GLint textureLoc2 = glGetUniformLocation(renderingProgram, "material.specular");
 
         glUniform1i(textureLoc1, 0); // Set the sampler texture unit to 0
-        glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
+                                     //    glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
+        glUniform1i(textureLoc2, 1); // Set the sampler texture unit to 1
 
         glDrawArrays(GL_TRIANGLES, 0, 36); // Draw the triangle
     }
@@ -173,7 +215,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow *window = glfwCreateWindow(700, 700, " Hello Mix Texture ", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, " Hello Mix Texture ", nullptr, nullptr);
 
     if (!window)
     {
@@ -181,6 +223,7 @@ int main()
         return -1;
     }
 
+    glfwMaximizeWindow(window);
     aspectRatio = 700.0f / 700.0f;
 
     glfwMakeContextCurrent(window);
@@ -218,67 +261,77 @@ int main()
 
 void setUpVertices(void)
 {
-    // 3 vertices each and its texture coordinates
+    // Posiciones (x, y, z) y normales (nx, ny, nz)
     float vertexPositions[] = {
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,     1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f,      1.0f, 1.0f,
-        0.5f, 0.5f, -0.5f,      1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f,     0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        // Cara trasera (normales hacia -Z)
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
 
-        -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f,      1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f,       1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f,       1.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f,      0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,
+        // Cara delantera (normales hacia +Z)
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-        -0.5f, 0.5f, 0.5f,   1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f,   1.0f, 0.0f,
+        // Cara izquierda (normales hacia -X)
+        -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
+        -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-        0.5f, 0.5f, 0.5f,   1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f,   1.0f, 0.0f,
+        // Cara derecha (normales hacia +X)
+         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
+         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f,   1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f,   1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        // Cara inferior (normales hacia -Y)
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 
+         0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 
-        -0.5f, 0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, 0.5f, -0.5f,   1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f,    1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f,    1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f,   0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f,  0.0f, 1.0f  };
+        // Cara superior (normales hacia +Y)
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 
+         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f   
+    };
 
     glGenVertexArrays(1, vao);
-    ;
     glBindVertexArray(vao[0]);
 
-    glGenBuffers(1, vbo);
+    glGenBuffers(1, vbo); // Solo un VBO es necesario
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+    // Atributo para las posiciones (vec3)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+    // Atributo para las normales (vec3)
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+    // Atributo para las coordenadas de textura (vec2)
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
 }
 
 void processInput(GLFWwindow *window)

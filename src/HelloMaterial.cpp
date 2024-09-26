@@ -149,7 +149,7 @@ void rotateLight() {
 void display(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 0.580f, 0.0250f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -169,7 +169,7 @@ void display(GLFWwindow *window)
 
         float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
 
-        model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
+        //model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
 
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 
