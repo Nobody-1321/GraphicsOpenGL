@@ -180,7 +180,7 @@ int main() {
         std::cout << "failed to initialize GLAD " << std::endl;
         return -1;
     }
-    
+/*/    
     while (!resourcesLoaded) {  // Mientras los recursos no se hayan cargado
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -189,7 +189,7 @@ int main() {
         glfwPollEvents(); 
 
         init(window);
-    }
+    }*/
 
     glfwSetWindowTitle(window, "Programa Renderizado");
     glViewport(0, 0, mode->width, mode->height);

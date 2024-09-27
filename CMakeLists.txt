@@ -23,6 +23,9 @@ include_directories(
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
+#find directx
+
+#find_package(DirectX REQUIRED)
 
 #add_executable(${PROJECT_NAME} src/basic/HelloWindow.cpp)
 #add_executable(${PROJECT_NAME} src/prototypes/loadingWindow.cpp)
@@ -30,7 +33,7 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/basic/HelloSquare.cpp)
 #add_executable(${PROJECT_NAME} src/basic/HelloTriangle.cpp)
 #add_executable(${PROJECT_NAME} src/basic/HelloGlsl.cpp)
-add_executable(${PROJECT_NAME} src/basic/HelloInterpolation.cpp)
+#add_executable(${PROJECT_NAME} src/basic/HelloInterpolation.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTexture.cpp)
 #add_executable(${PROJECT_NAME} src/HelloMixTexture.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTrans.cpp)
@@ -41,7 +44,7 @@ add_executable(${PROJECT_NAME} src/basic/HelloInterpolation.cpp)
 #add_executable(${PROJECT_NAME} src/HelloGui.cpp)
 #add_executable(${PROJECT_NAME} src/HelloLight.cpp)
 #add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
-#add_executable(${PROJECT_NAME} src/HelloDiffuseMap.cpp)
+add_executable(${PROJECT_NAME} src/HelloDiffuseMap.cpp)
 
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)

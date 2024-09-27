@@ -83,7 +83,7 @@ int main() {
     init();    
 
     
-    while (!glfwWindowShouldClose(window)) {
+   // while (!glfwWindowShouldClose(window)) {
         display(window);
         processInput(window);          
         glfwPollEvents();
