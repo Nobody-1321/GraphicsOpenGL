@@ -3,12 +3,12 @@
 #include "../include/IMesh.hpp"
 #include <vector>
 
-class Mesh : public IMesh {
+class VertexMesh : public IMesh {
 public:
-    Mesh(std::vector<float> vertexPositions);
-    ~Mesh();
+    VertexMesh(std::vector<float> vertexPositions);
+    ~VertexMesh();
     void setupMesh();
-    void render() override;
+    void render();
 private:
     unsigned int vao, vbo;
     std::vector<float> vertexPositions;

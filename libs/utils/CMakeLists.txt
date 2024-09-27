@@ -13,7 +13,9 @@ set(MAIN_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Torus.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/modelImporter.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/VertexMesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh_VV.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/MeshFactory.cpp
 )
 
 add_library(utilities STATIC ${MAIN_SOURCE_FILES})

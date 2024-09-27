@@ -1,16 +1,16 @@
-#include "../include/Mesh.hpp"
+#include "../include/VertexMesh.hpp"
 
-Mesh::Mesh(std::vector<float> vertexPositions) : vertexPositions(vertexPositions) {
+VertexMesh::VertexMesh(std::vector<float> vertexPositions) : vertexPositions(vertexPositions) {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 }
 
-Mesh::~Mesh() {
+VertexMesh::~VertexMesh() {
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
 }
 
-void Mesh::setupMesh() {
+void VertexMesh::setupMesh() {
     
     glBindVertexArray(vao);
     
@@ -20,9 +20,10 @@ void Mesh::setupMesh() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 }
-
-void Mesh::render() {
+//desactivar el vao
+void VertexMesh::render() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, vertexPositions.size() / 3);
+    glBindVertexArray(0);
 }
 
