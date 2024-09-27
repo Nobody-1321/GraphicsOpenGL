@@ -62,7 +62,7 @@ glm::vec3 cubePositions[] = {
     glm::vec3(0.65f, -1.0f, -1.25f), // Juntando más
     glm::vec3(0.75f, 1.0f, -1.25f), // Reduciendo la distancia
     glm::vec3(0.75f, 0.1f, -0.75f), // Acercando este cubo
-    glm::vec3(-0.65f, 0.5f, -10.75f) //light cube
+    glm::vec3(0.0f, 0.0f, -10.00f) //light cube
 };
 
 void rotateLight() { 
@@ -72,11 +72,11 @@ void rotateLight() {
     float time = glfwGetTime();
     
     // Ajusta las posiciones en el eje X y Z para moverse en una circunferencia
-    cubePositions[9].y = cos(time) * radius;
+//    cubePositions[9].y = cos(time) * radius;
     cubePositions[9].z = sin(time) * radius;
 
     // Si no deseas movimiento vertical, mantiene el valor constante en Y
-    cubePositions[9].x = 1.0f;  // Altura fija de la luz
+//    cubePositions[9].x = 1.0f;  // Altura fija de la luz
 }
 
 
@@ -85,8 +85,8 @@ void init()
 
 #ifdef __WIN32__
     renderingProgram = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader10_DirL.glsl",
-        ".\\shaders\\fragment_shader10_DirL.glsl");
+        ".\\shaders\\vertex_shader10_AttL.glsl",
+        ".\\shaders\\fragment_shader10_AttL.glsl");
     
 //    renderingProgram = Utils::createShaderProgram(
 //        ".\\shaders\\vertex_shader9_DML.glsl",
@@ -168,11 +168,17 @@ void display(GLFWwindow *window)
         unsigned int viewPosLoc = glGetUniformLocation(renderingProgram, "viewPos");
 
         unsigned int lightPosLoc = glGetUniformLocation(renderingProgram, "light.direction");
-        //unsigned int lightPosLoc = glGetUniformLocation(renderingProgram, "light.position");
         unsigned int lightAmbLoc = glGetUniformLocation(renderingProgram, "light.ambient");
         unsigned int lightDiffLoc = glGetUniformLocation(renderingProgram, "light.diffuse");
         unsigned int lightSpecLoc = glGetUniformLocation(renderingProgram, "light.specular");
 
+        unsigned int lightConstantLoc = glGetUniformLocation(renderingProgram, "light.constant");
+        unsigned int lightLinearLoc = glGetUniformLocation(renderingProgram, "light.linear");
+        unsigned int lightQuadraticLoc = glGetUniformLocation(renderingProgram, "light.quadratic");
+
+        glUniform1f(lightConstantLoc, 1.0f);
+        glUniform1f(lightLinearLoc, 0.09f);
+        glUniform1f(lightQuadraticLoc, 0.032f);
 
         glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPos));
 

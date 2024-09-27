@@ -13,6 +13,7 @@ set(MAIN_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Torus.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/modelImporter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh.cpp
 )
 
 add_library(utilities STATIC ${MAIN_SOURCE_FILES})
@@ -26,6 +27,6 @@ target_link_libraries(utilities PRIVATE
     glad
     glfw
     glm::glm
-    ${OPENGL_LIBRARIES}
+    OpenGL::GL
     soil3
 )

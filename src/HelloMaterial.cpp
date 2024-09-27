@@ -223,7 +223,7 @@ void display(GLFWwindow *window)
         glUniform3fv(lightPosLoc, 1, glm::value_ptr(cubePositions[4]));
 
 
-        glBindVertexArray(vao[0]);
+        //glBindVertexArray(vao[0]);
         glDrawElements(GL_TRIANGLES, mySphere.getNumIndices(), GL_UNSIGNED_INT, 0);
     }
 }
