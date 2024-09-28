@@ -15,6 +15,7 @@ set(MAIN_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/modelImporter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/VertexMesh.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh_VV.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mesh_VT.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/MeshFactory.cpp
 )
 

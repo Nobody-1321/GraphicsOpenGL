@@ -24,6 +24,5 @@ void VertexMesh::setupMesh() {
 void VertexMesh::render() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, vertexPositions.size() / 3);
-    glBindVertexArray(0);
 }
 

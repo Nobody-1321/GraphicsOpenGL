@@ -9,6 +9,8 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void setupMesh();
+
 
 MeshFactory factory;
 GLuint renderingProgram;
@@ -24,59 +26,42 @@ void init(){
         //texture = Utils::loadTexture(".\\textures\\torus.jpg");
     #else
         renderingProgram = Utils::createShaderProgram(
-            "./shaders/vertex_shader2.glsl",
-            "./shaders/fragment_shader2.glsl");
+            "./shaders/vertex_shader1.glsl",
+            "./shaders/fragment_shader1.glsl");
         
         //texture = Utils::loadTexture("./textures/sand.png");        
         std::cout << "Linux" << std::endl;
     #endif
  
-    std::vector<float> vertexPositions = {
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-    
-    factory.registerMeshType("simple", [vertexPositions]() { 
-        //return std::make_unique<VertexMesh>(vertexPositions); 
-        return std::make_unique<Mesh_VV>(vertexPositions); 
-    });
-    
- 
+    setupMesh();
 }
 
 // Function to updae the display
-void display(GLFWwindow* window){
+void display(GLFWwindow* window) {
 
     glClear(GL_COLOR_BUFFER_BIT);       
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    
-    
-    auto mesh = factory.createMesh("simple");
+        
+    auto mesh = factory.createMesh("triangleVC");
+
     mesh->setupMesh();
-
     glUseProgram(renderingProgram);
-
     mesh->render();
+
 }
 
 
 int main() {
     
-   
     if (!glfwInit()) {exit(EXIT_FAILURE);}
-
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);                  
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);                  
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            
-
     
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, " Mesh ", nullptr, nullptr);
-
 
     if (!window) {
         glfwTerminate();
@@ -84,9 +69,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-
     glfwMaximizeWindow(window);
-
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "failed to initialize GLAD " << std::endl;
@@ -96,7 +79,6 @@ int main() {
     init();
 
     while (!glfwWindowShouldClose(window)) {
-
         display(window);
         processInput(window);          
         glfwPollEvents();
@@ -107,6 +89,21 @@ int main() {
    
     return 0;
 }
+
+void setupMesh(){
+
+    std::vector<float> vertexPositions = {
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    factory.registerMeshType("triangleVC", [vertexPositions]() { 
+        return std::make_unique<Mesh_VV>(vertexPositions); 
+    });
+
+}
+
 
 void processInput(GLFWwindow *window)
 {

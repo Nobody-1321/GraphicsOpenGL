@@ -67,7 +67,6 @@ void display(GLFWwindow* window){
 
     glDrawArrays(GL_TRIANGLES, 0, 3);   // Draw the triangle     
 
-
 }
 
 int main() {

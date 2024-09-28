@@ -77,8 +77,8 @@ void init()
     std::cout << "Windows" << std::endl;
 #else
     renderingProgram = Utils::createShaderProgram(
-        "./shaders/vertex_shader6.glsl",
-        "./shaders/fragment_shader6.glsl");
+        "./shaders/vertex_shader61.glsl",
+        "./shaders/fragment_shader61.glsl");
 
     texture1 = Utils::loadTexture("./textures/torus.jpg");
     texture2 = Utils::loadTexture("./textures/angry.png");
@@ -101,62 +101,80 @@ void init()
 // new program add
 void display(GLFWwindow *window)
 {
-//    glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    // Habilitar stencil y depth tests
+    glEnable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Fase 1: Configurar stencil para dibujar los cubos normales
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  // Reemplaza con 1 cuando el test pasa
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);          // Siempre pasa, stencil = 1
+    glStencilMask(0xFF);                        // Habilitar la escritura en el buffer de stencil
 
     glUseProgram(renderingProgram);
 
+    // Dibujar cubos normales
     for (int i = 0; i < 10; i++)
     {
+        // Configuración de matrices model, view, projection
         model = glm::mat4(1.0f);
-        view = glm::mat4(1.0f);
-        projection = glm::mat4(1.0f);
-
         model = glm::translate(model, cubePositions[i]);
-
-        float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
-
+        float angle = glm::radians(20.0f * (float)glfwGetTime());
         model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
-
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 
-        
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        
-        //view = glm::lookAt(glm::vec3(0.0, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0),
-        //                   glm::vec3(0.0, 1.0, 0.0));
-        
-
         projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
 
-        unsigned int modelLoc = glGetUniformLocation(renderingProgram, "model");
-        unsigned int viewLoc = glGetUniformLocation(renderingProgram, "view");
-        unsigned int projectionLoc = glGetUniformLocation(renderingProgram, "projection");
+        // Pasar matrices a shaders
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        //vector color
+        glUniform4f(glGetUniformLocation(renderingProgram, "ourColor"), 0.0f, 0.0f, 1.0f, 1.0f);
 
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        // Vincular y usar texturas
+        glBindVertexArray(vao[0]);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glUniform1i(glGetUniformLocation(renderingProgram, "texture1"), 0);
+        glUniform1i(glGetUniformLocation(renderingProgram, "texture2"), 1);
 
-        glBindVertexArray(vao[0]); // Bind to VAO containing the triangle
-
-        glActiveTexture(GL_TEXTURE0);           // Activate the texture unit
-        glBindTexture(GL_TEXTURE_2D, texture1); // Bind the texture to the unit
-
-        glActiveTexture(GL_TEXTURE1);           // Activate the texture unit
-        glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit
-
-        
-        GLint textureLoc1 = glGetUniformLocation(renderingProgram, "texture1");
-           GLint textureLoc2 = glGetUniformLocation(renderingProgram, "texture2");
-
-        glUniform1i(textureLoc1, 0); // Set the sampler texture unit to 0
-        glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
-
-        glDrawArrays(GL_TRIANGLES, 0, 36); // Draw the triangle
+        // Dibujar el cubo
+        glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+
+    // Fase 2: Dibujar contornos (u otro efecto)
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);   // Solo pasa donde el stencil no es 1
+    glStencilMask(0x00);                   // Deshabilitar escritura en stencil
+    glDisable(GL_DEPTH_TEST);              // Deshabilitar test de profundidad
+
+    for (int i = 0; i < 10; i++)
+    {
+        // Ajustar el tamaño del modelo para el contorno
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions[i]);
+        float angle = glm::radians(20.0f * (float)glfwGetTime());
+        model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.55f, 0.55f, 0.55f));  // Agrandar el modelo ligeramente para el contorno
+
+        // Pasar matrices a shaders
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(renderingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform4f(glGetUniformLocation(renderingProgram, "ourColor"), 0.0f, 0.0f, 0.0f, 0.0f);
+        
+        // Dibujar el contorno
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
+    // Restaurar estado
+    glStencilMask(0xFF);  // Habilitar la escritura en el stencil nuevamente
+    glEnable(GL_DEPTH_TEST);  // Habilitar el test de profundidad
 }
 
 int main()

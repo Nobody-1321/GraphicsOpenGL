@@ -1,8 +1,11 @@
 #define GLFW_INCLUDE_NONE
+#include <vector>
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Utils.hpp>
+#include <MeshFactory.hpp>
+#include <Mesh_VT.hpp> 
 #include <cmath>
 using namespace std;
 
@@ -37,13 +40,16 @@ bool firstMouse;
 float sensitivity; // Sensibilidad del mouse
 
 
+MeshFactory factory;
+
+
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void setUpVertices(void);
 GLuint createShaderProgram();
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-
+void setupMesh();
 
 
 void calculateDeltaTime() {
@@ -69,23 +75,23 @@ void init()
 
 #ifdef __WIN32__
     renderingProgram = Utils::createShaderProgram(
-        ".\\shaders\\vertex_shader6.glsl",
-        ".\\shaders\\fragment_shader6.glsl");//deep example 61 normal 6
+        ".\\shaders\\vertex_shader10.glsl",
+        ".\\shaders\\fragment_shader10.glsl");/
 
     texture1 = Utils::loadTexture(".\\textures\\torus.jpg");
     texture2 = Utils::loadTexture(".\\textures\\angry.png");
     std::cout << "Windows" << std::endl;
 #else
     renderingProgram = Utils::createShaderProgram(
-        "./shaders/vertex_shader6.glsl",
-        "./shaders/fragment_shader6.glsl");
+        "./shaders/vertex_shader10.glsl",
+        "./shaders/fragment_shader10.glsl");
 
     texture1 = Utils::loadTexture("./textures/torus.jpg");
     texture2 = Utils::loadTexture("./textures/angry.png");
     std::cout << "Linux" << std::endl;
 #endif
     
-    cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+    cameraPos   = glm::vec3(0.0f, 0.0f,  1.0f);
     cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
@@ -95,67 +101,49 @@ void init()
     firstMouse = true;
     sensitivity = 0.1f; // Sensibilidad del mouse
 
-    setUpVertices();
+    setupMesh();
 }
 
 // new program add
 void display(GLFWwindow *window)
 {
-//    glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    auto mesh = factory.createMesh("Mesh_VT");
+    mesh->setupMesh();
+
     glUseProgram(renderingProgram);
+    
+    glActiveTexture(GL_TEXTURE0);           // Activate the texture unit
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind the texture to the unit
+    //glActiveTexture(GL_TEXTURE1);           // Activate the texture unit
+    //glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit
 
     for (int i = 0; i < 10; i++)
     {
         model = glm::mat4(1.0f);
         view = glm::mat4(1.0f);
         projection = glm::mat4(1.0f);
-
+        
         model = glm::translate(model, cubePositions[i]);
-
         float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
-
         model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
-
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-
-        
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        
-        //view = glm::lookAt(glm::vec3(0.0, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0),
-        //                   glm::vec3(0.0, 1.0, 0.0));
-        
-
         projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
 
-        unsigned int modelLoc = glGetUniformLocation(renderingProgram, "model");
-        unsigned int viewLoc = glGetUniformLocation(renderingProgram, "view");
-        unsigned int projectionLoc = glGetUniformLocation(renderingProgram, "projection");
 
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv( glGetUniformLocation(renderingProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv( glGetUniformLocation(renderingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv( glGetUniformLocation(renderingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-        glBindVertexArray(vao[0]); // Bind to VAO containing the triangle
+        glUniform1i(glGetUniformLocation(renderingProgram, "texture1"), 0); 
+//        glUniform1i(glGetUniformLocation(renderingProgram, "texture2"), 1);
 
-        glActiveTexture(GL_TEXTURE0);           // Activate the texture unit
-        glBindTexture(GL_TEXTURE_2D, texture1); // Bind the texture to the unit
-
-        glActiveTexture(GL_TEXTURE1);           // Activate the texture unit
-        glBindTexture(GL_TEXTURE_2D, texture2); // Bind the texture to the unit
-
-        
-        GLint textureLoc1 = glGetUniformLocation(renderingProgram, "texture1");
-           GLint textureLoc2 = glGetUniformLocation(renderingProgram, "texture2");
-
-        glUniform1i(textureLoc1, 0); // Set the sampler texture unit to 0
-        glUniform1i(textureLoc2, 1);         // Set the sampler texture unit to 1
-
-        glDrawArrays(GL_TRIANGLES, 0, 36); // Draw the triangle
+        mesh->render();
     }
 }
 
@@ -216,10 +204,10 @@ int main()
     return 0;
 }
 
-void setUpVertices(void)
+void setupMesh()
 {
     // 3 vertices each and its texture coordinates
-    float vertexPositions[] = {
+    std::vector<float> vertexPositions = {
         -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
         0.5f, -0.5f, -0.5f,     1.0f, 0.0f,
         0.5f, 0.5f, -0.5f,      1.0f, 1.0f,
@@ -262,23 +250,9 @@ void setUpVertices(void)
         -0.5f, 0.5f, 0.5f,   0.0f, 0.0f,
         -0.5f, 0.5f, -0.5f,  0.0f, 1.0f  };
 
-    glGenVertexArrays(1, vao);
-    ;
-    glBindVertexArray(vao[0]);
-
-    glGenBuffers(1, vbo);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    factory.registerMeshType("Mesh_VT", [vertexPositions]() {
+        return std::make_unique<Mesh_VT>(vertexPositions);
+    });
 }
 
 void processInput(GLFWwindow *window)
