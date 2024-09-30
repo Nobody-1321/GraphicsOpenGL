@@ -110,12 +110,28 @@ void init() {
     renderingPrograms[0] = Utils::createShaderProgram(
         ".\\shaders\\vertex_shader8_ML.glsl",
         ".\\shaders\\fragment_shader9_ML.glsl");
-
+`
  
 #else
-    renderingProgram = Utils::createShaderProgram(
+    renderingPrograms[4] = Utils::createShaderProgram(
         "./shaders/vertex_shader7.glsl",
         "./shaders/fragment_shader7.glsl");
+
+    renderingPrograms[3] = Utils::createShaderProgram(
+        "./shaders/vertex_shader8_ML.glsl",
+        "./shaders/fragment_shader9_ML.glsl");
+
+    renderingPrograms[2] = Utils::createShaderProgram(
+        "./shaders/vertex_shader8_ML.glsl",
+        "./shaders/fragment_shader9_ML.glsl");
+
+    renderingPrograms[1] = Utils::createShaderProgram(
+        "./shaders/vertex_shader8_ML.glsl",
+        "./shaders/fragment_shader9_ML.glsl");
+
+    renderingPrograms[0] = Utils::createShaderProgram(
+        "./shaders/vertex_shader8_ML.glsl",
+        "./shaders/fragment_shader9_ML.glsl");
     std::cout << "Linux" << std::endl;
 #endif
 
@@ -149,7 +165,7 @@ void rotateLight() {
 void display(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(1.0f, 0.580f, 0.0250f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -283,9 +299,6 @@ int main()
     }
 
     glfwDestroyWindow(window);
-    // glDeleteVertexArrays(1, &VAO);
-    // glDeleteBuffers(1, &VBO);
-    // glDeleteBuffers(1, &EBO);
     glfwTerminate();
 
     return 0;

@@ -2,7 +2,6 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-//#include <soild2/SOIL2/SOIL2.h>
 #include <SOIL2.hpp>
 
 #include <Utils.hpp>
@@ -83,7 +82,7 @@ int main() {
     init();    
 
     
-   // while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window)) {
         display(window);
         processInput(window);          
         glfwPollEvents();
@@ -105,7 +104,7 @@ void setUpVertices(void){
          0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
         -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
          0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.520f
     };                                                                                                             
 
     glGenVertexArrays(1, vao);;

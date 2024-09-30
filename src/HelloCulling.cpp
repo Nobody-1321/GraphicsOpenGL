@@ -113,10 +113,16 @@ void init() {
 
 void display(GLFWwindow *window)
 {
-    glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    //glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     auto mesh_floor = factory.createMesh("Mesh_floor");
     mesh_floor->setupMesh();
@@ -132,8 +138,10 @@ void display(GLFWwindow *window)
 
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     
-    model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.0f));
-    
+    model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+    float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
+    model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
+ 
     view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     
     projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
@@ -145,48 +153,7 @@ void display(GLFWwindow *window)
     glUniform1i(glGetUniformLocation(floorTexture, "texture1"), 0);
 
     mesh_floor->render();
-
-
-
-    auto mesh_grass = factory.createMesh("Mesh_grass");
-    mesh_grass->setupMesh();
-
-    glUseProgram(grassShader);
-    
-    glActiveTexture(GL_TEXTURE0);           // Activate the texture unit first before binding texture
-    glBindTexture(GL_TEXTURE_2D, windowTexture); // Bind the texture to the unit
-    //glBindTexture(GL_TEXTURE_2D, floorTexture); // Bind the texture to the unit
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   
-    std::sort(std::begin(cubePositions), std::end(cubePositions), [&](glm::vec3 a, glm::vec3 b) {
-    return glm::length(cameraPos - a) > glm::length(cameraPos - b);
-    });
-
-    for (int i = 0; i < 4; i++)
-    {
-        model = glm::mat4(1.0f);
-        view = glm::mat4(1.0f);
-        projection = glm::mat4(1.0f);
-        
-        model = glm::translate(model, cubePositions[i]);
-        //float angle = glm::radians(20.0f * (float)glfwGetTime()); // Cambiar con el tiempo
-        //model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        projection = glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
-
-
-        glUniformMatrix4fv( glGetUniformLocation(grassShader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv( glGetUniformLocation(grassShader, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv( glGetUniformLocation(grassShader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
-        glUniform1i(glGetUniformLocation(grassShader, "texture1"), 0); 
-
-        mesh_grass->render();
-    }
-
+  
 }
 
 int main()
@@ -249,83 +216,60 @@ void setupMesh()
     // 3 vertices each and its texture coordinate
 
     std::vector<float> vertexPositions_floor = {
-    // Cara trasera
-    -0.5f, -0.1f, -0.5f,    0.0f, 0.0f,
-    0.5f, -0.1f, -0.5f,     1.0f, 0.0f,
-    0.5f, 0.1f, -0.5f,      1.0f, 1.0f,
-    0.5f, 0.1f, -0.5f,      1.0f, 1.0f,
-    -0.5f, 0.1f, -0.5f,     0.0f, 1.0f,
-    -0.5f, -0.1f, -0.5f,    0.0f, 0.0f,
-
-    // Cara delantera
-    -0.5f, -0.1f, 0.5f,     0.0f, 0.0f,
-    0.5f, -0.1f, 0.5f,      1.0f, 0.0f,
-    0.5f, 0.1f, 0.5f,       1.0f, 1.0f,
-    0.5f, 0.1f, 0.5f,       1.0f, 1.0f,
-    -0.5f, 0.1f, 0.5f,      0.0f, 1.0f,
-    -0.5f, -0.1f, 0.5f,     0.0f, 0.0f,
-
-    // Cara izquierda
-    -0.5f, 0.1f, 0.5f,   1.0f, 0.0f,
-    -0.5f, 0.1f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-    -0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-    -0.5f, -0.1f, 0.5f,  0.0f, 0.0f,
-    -0.5f, 0.1f, 0.5f,   1.0f, 0.0f,
-
-    // Cara derecha
-    0.5f, 0.1f, 0.5f,   1.0f, 0.0f,
-    0.5f, 0.1f, -0.5f,  1.0f, 1.0f,
-    0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-    0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-    0.5f, -0.1f, 0.5f,  0.0f, 0.0f,
-    0.5f, 0.1f, 0.5f,   1.0f, 0.0f,
-
-    // Cara inferior
-    -0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-    0.5f, -0.1f, -0.5f,  1.0f, 1.0f,
-    0.5f, -0.1f, 0.5f,   1.0f, 0.0f,
-    0.5f, -0.1f, 0.5f,   1.0f, 0.0f,
-    -0.5f, -0.1f, 0.5f,  0.0f, 0.0f,
-    -0.5f, -0.1f, -0.5f, 0.0f, 1.0f,
-
-    // Cara superior
-    -0.5f, 0.1f, -0.5f,  0.0f, 1.0f,
-    0.5f, 0.1f, -0.5f,   1.0f, 1.0f,
-    0.5f, 0.1f, 0.5f,    1.0f, 0.0f,
-    0.5f, 0.1f, 0.5f,    1.0f, 0.0f,
-    -0.5f, 0.1f, 0.5f,   0.0f, 0.0f,
-    -0.5f, 0.1f, -0.5f,  0.0f, 1.0f
-    };
-
-
-    //squere vertex
-    std::vector<float> vertexPositions_grass = {
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,     1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f,      1.0f, 1.0f,
-        0.5f, 0.5f, -0.5f,      1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f,     0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f
-    };
+    // back face
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right    
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right              
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left                
+    // front face
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right        
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left        
+    // left face
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left       
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+    // right face
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right      
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right          
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+    // bottom face          
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left        
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+    // top face
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right                 
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // bottom-left  
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f  // top-left              
+};
 
 
     factory.registerMeshType("Mesh_floor", [vertexPositions_floor]() {
         return std::make_unique<Mesh_VT>(vertexPositions_floor);
     }); 
     
-    factory.registerMeshType("Mesh_grass", [vertexPositions_grass]() {
-        return std::make_unique<Mesh_VT>(vertexPositions_grass);
-    });
-
 }
 
 void processInput(GLFWwindow *window)
 {
     float cameraSpeed = 2.1f * deltaTime; // Ajustar la velocidad según deltaTime
-    
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        cameraSpeed = 3.5f * deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);

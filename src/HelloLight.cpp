@@ -92,9 +92,26 @@ void init() {
     
     std::cout << "Windows" << std::endl;
 #else
-    renderingProgram = Utils::createShaderProgram(
+    renderingPrograms[4] = Utils::createShaderProgram(
         "./shaders/vertex_shader7.glsl",
         "./shaders/fragment_shader7.glsl");
+
+    renderingPrograms[3] = Utils::createShaderProgram(
+        "./shaders/vertex_shader7.glsl",
+        "./shaders/fragment_shader7.glsl");
+
+    renderingPrograms[2] = Utils::createShaderProgram(
+        "./shaders/vertex_shader7_SL.glsl",
+        "./shaders/fragment_shader7_SL.glsl");
+
+    renderingPrograms[1] = Utils::createShaderProgram(
+        "./shaders/vertex_shader7_DL.glsl",
+        "./shaders/fragment_shader7_DL.glsl");
+
+    renderingPrograms[0] = Utils::createShaderProgram(
+        "./shaders/vertex_shader7_AL.glsl",
+        "./shaders/fragment_shader7_AL.glsl");
+ 
     std::cout << "Linux" << std::endl;
 #endif
 
