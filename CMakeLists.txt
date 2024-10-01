@@ -43,10 +43,10 @@ find_package(OpenGL REQUIRED)
 
 #add_executable(${PROJECT_NAME} src/prototypes/loadingWindow.cpp)
 #add_executable(${PROJECT_NAME} src/prototypes/loadingModel.cpp)
-add_executable(${PROJECT_NAME} src/HelloGui.cpp)
+#add_executable(${PROJECT_NAME} src/HelloGui.cpp)
 
 #add_executable(${PROJECT_NAME} src/HelloLight.cpp)
-#add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
+add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDiffuseMap.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDirectionalLight.cpp)
 #add_executable(${PROJECT_NAME} src/HelloAttenuationLight.cpp)

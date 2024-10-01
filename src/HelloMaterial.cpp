@@ -10,7 +10,10 @@ using namespace std;
 #define numVAOs 1
 #define numVBOs 2
 
-Sphere mySphere(1.0f, 144, 72);
+Sphere mySphere(1.0f, 4608, 2304);
+//Sphere mySphere(1.0f, 32, 16);
+//Sphere mySphere(1.0f, 16, 8);
+//Sphere mySphere(1.0f, 4, 2);
 
 GLuint texture1;
 GLuint texture2;
