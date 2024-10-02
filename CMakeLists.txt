@@ -46,7 +46,7 @@ find_package(OpenGL REQUIRED)
 #add_executable(${PROJECT_NAME} src/HelloGui.cpp)
 
 #add_executable(${PROJECT_NAME} src/HelloLight.cpp)
-add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
+#add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDiffuseMap.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDirectionalLight.cpp)
 #add_executable(${PROJECT_NAME} src/HelloAttenuationLight.cpp)
@@ -59,6 +59,10 @@ add_executable(${PROJECT_NAME} src/HelloMaterial.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
 #add_executable(${PROJECT_NAME} src/HelloBlending.cpp)
 #add_executable(${PROJECT_NAME} src/HelloGarden.cpp)
+
+
+
+add_executable(${PROJECT_NAME} src/HelloModelLighting.cpp)
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 set (RUNTIME_OUTPUT_DIRECTORY_TEXTURES ${CMAKE_CURRENT_BINARY_DIR}/textures)

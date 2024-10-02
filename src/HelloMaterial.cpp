@@ -10,8 +10,8 @@ using namespace std;
 #define numVAOs 1
 #define numVBOs 2
 
-Sphere mySphere(1.0f, 4608, 2304);
-//Sphere mySphere(1.0f, 32, 16);
+//Sphere mySphere(1.0f, 4608, 2304);
+Sphere mySphere(1.0f, 144, 72);
 //Sphere mySphere(1.0f, 16, 8);
 //Sphere mySphere(1.0f, 4, 2);
 
@@ -324,6 +324,8 @@ void setUpVertices(void)
         vertexPositions.push_back(normals[i].y);
         vertexPositions.push_back(normals[i].z);
     }
+
+    std::cout << "Vertices: " << vertices.size() << std::endl;
 
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);

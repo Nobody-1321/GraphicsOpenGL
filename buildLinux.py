@@ -20,10 +20,8 @@ def run_command(command, cwd=None):
     """Ejecuta un comando en la terminal."""
     try:
         # Ejecutar el comando sin capturar la salida
-        result = subprocess.run(command, cwd=cwd, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # Imprimir salida estándar y errores
-        print(result.stdout, end='')
-        print(result.stderr, end='')
+        result = subprocess.run(command, cwd=cwd, check=True, text=True)
+
     except subprocess.CalledProcessError as e:
         print(f"Error al ejecutar el comando: {e}")
         print(e.stderr)
@@ -49,3 +47,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+#cmake  -DCMAKE_TOOLCHAIN_FILE=generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release ../..
