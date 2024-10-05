@@ -2,7 +2,7 @@
 
 #include "Mesh.hpp"
 #include <iostream>
-class TriangleMesh : public Mesh {
+class TriangleMeshOGL : public Mesh {
 public:
     
     void setupMesh() override {
@@ -33,4 +33,10 @@ public:
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
+    //metodos
+    ///
+    //atributos
+    
 };
+
+

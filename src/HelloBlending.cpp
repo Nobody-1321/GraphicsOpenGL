@@ -76,7 +76,7 @@ void init()
 #ifdef __WIN32__
     renderingProgram = Utils::createShaderProgram(
         ".\\shaders\\vertex_shader10.glsl",
-        ".\\shaders\\fragment_shader10.glsl");/
+        ".\\shaders\\fragment_shader10.glsl");
 
     texture1 = Utils::loadTexture(".\\textures\\torus.jpg");
     texture2 = Utils::loadTexture(".\\textures\\angry.png");

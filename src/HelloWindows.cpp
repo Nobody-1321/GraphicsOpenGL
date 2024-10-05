@@ -7,6 +7,7 @@
 #include <MeshFactory.hpp>
 #include <Mesh_VT.hpp> 
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 #define numVAOs 1

@@ -53,7 +53,7 @@ find_package(OpenGL REQUIRED)
 
 #add_executable(${PROJECT_NAME} src/HelloMesh.cpp)
 
-#add_executable(${PROJECT_NAME} src/HelloCulling.cpp)
+add_executable(${PROJECT_NAME} src/HelloCulling.cpp)
 #add_executable(${PROJECT_NAME} src/HelloTesting.cpp)
 #add_executable(${PROJECT_NAME} src/HelloWindows.cpp)
 #add_executable(${PROJECT_NAME} src/HelloDeep.cpp)
@@ -62,7 +62,7 @@ find_package(OpenGL REQUIRED)
 
 
 
-add_executable(${PROJECT_NAME} src/HelloModelLighting.cpp)
+#add_executable(${PROJECT_NAME} src/HelloModelLighting.cpp)
 
 set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 set (RUNTIME_OUTPUT_DIRECTORY_TEXTURES ${CMAKE_CURRENT_BINARY_DIR}/textures)

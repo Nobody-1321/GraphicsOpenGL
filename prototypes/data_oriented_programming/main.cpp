@@ -29,31 +29,42 @@ bool Author::isProlific(){
 
 struct DataAuthor
 {
-    std::string first;
-    std::string last;
+    std::string firstName;
+    std::string lastName;
     unsigned int books;
 };
 
-
-
-class dataAuthor{
-    static std::string fullName(const DataAuthor& author);
-    static bool isProlific(const DataAuthor& author);
+struct userData{
+    std::string firstName;
+    std::string lastName;
+    unsigned int books;
 };
 
+template <typename T>
+class dataManipulator{
+    static std::string fullName(const T& data);
+    static bool isProlific(const T& data);
+};
 
-std::string dataAuthor::fullName(const DataAuthor& author){
-    return author.first + " " + author.last;
+template <typename T>
+std::string dataManipulator<T>::fullName(const T& data){
+    return data.firstName + " " + data.lastName;
 }
 
-bool dataAuthor::isProlific(const DataAuthor& author){
-    return author.books > 10;
+template <typename T>
+bool dataManipulator<T>::isProlific(const T& data){
+    return data.books > 10;
 }
+
 
 int main(){
     Author author{"Bjarne", "Stroustrup", 20};
-    std::cout << author.fullName() << " is prolific: " << author.isProlific() << std::endl;
+    std::cout << author.fullName() << std::endl;
+    
+   // DataAuthor  dataAuthor{"Bjarne", "Stroustrup", 20};
+   // std::cout << dataManipulator<DataAuthor>::fullName(dataAuthor) << std::endl;
 
+   // userData user{"Bjarne", "Stroustrup", 20};
+   // std::cout << dataManipulator<userData>::fullName(user) << std::endl;
 
-    return 0;
 }
