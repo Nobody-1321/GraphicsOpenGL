@@ -39,7 +39,7 @@ void init(){
 // new program add
 void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f); // Color gris claro
 
     glUseProgram(renderingProgram);  
     
@@ -100,10 +100,10 @@ void setUpVertices(void){
     //2 triangles with 3 vertices each and its color
     float vertexPositions[36] = { 
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, 0.0f, 1.0f, 0.28f, 0.0f,
         -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 1.0f, 0.588f, 0.0f,
          0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.520f
     };                                                                                                             
 

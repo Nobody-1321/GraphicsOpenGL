@@ -28,7 +28,7 @@ const char *fragmentShaderSource = "#version 410 core\n"
     "in vec4 vertexColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vertexColor;\n"
+    "   FragColor = vertexColor;\n"    
     "}\n\0";
 
 
@@ -45,7 +45,7 @@ void init(){
 
 void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f); // Color gris claro
 
     glUseProgram(renderingProgram);  
     
@@ -113,7 +113,6 @@ int main() {
     return 0;
 }
 
-
 void setUpVertices(void){
 
     float vertexPositions[] = { 
@@ -125,9 +124,7 @@ void setUpVertices(void){
         0.5f, 0.5f, 0.0f           
     };                             
                                    
-                                   
-                                   
-
+                                                               
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
 

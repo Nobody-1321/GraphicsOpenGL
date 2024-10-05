@@ -40,8 +40,7 @@ void init(){
 // Function to update the display
 void display(GLFWwindow* window){
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.8470588235294118f, 0.8274509803921568f, 0.7647058823529411f, 1.0f);
-
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f); // Color gris claro
     glUseProgram(renderingProgram);  
 
     glBindVertexArray(vao[0]);          
@@ -49,10 +48,8 @@ void display(GLFWwindow* window){
     //second parameter is the starting index of the vertex array,
     //and the third parameter is the number of vertices to render.
     //glDrawArrays(GL_TRIANGLES, 0, 3); //this renders a triangle
-    //glDrawArrays(GL_TRIANGLES, 2, 3); // this renders a triangle starting from the 3rd vertex
-    //glDrawArrays(GL_TRIANGLES, 0, 6);  //this renders two triangles that form a square
-    glDrawArrays(GL_LINE_LOOP, 0, 6);                                        
-    glBindVertexArray(0); 
+    //glDrawArrays(GL_TRIANGLES, 0, 4);  //this renders two triangles that form a square
+    glDrawArrays(GL_LINE_LOOP, 0, 3);                                        
     
     
 

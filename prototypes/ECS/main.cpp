@@ -76,7 +76,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    GLFWwindow *window = glfwCreateWindow(700, 700, " Hello Mix Texture ", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "ECS", NULL, NULL);
 
     if (!window)
     {
