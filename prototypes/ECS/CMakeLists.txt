@@ -24,7 +24,7 @@ find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
 
 
-add_executable(${PROJECT_NAME} main.cpp )
+add_executable(${PROJECT_NAME} main.cpp componentCreator.cpp)
 
 #set (RUNTIME_OUTPUT_DIRECTORY_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 #set (RUNTIME_OUTPUT_DIRECTORY_TEXTURES ${CMAKE_CURRENT_BINARY_DIR}/textures)

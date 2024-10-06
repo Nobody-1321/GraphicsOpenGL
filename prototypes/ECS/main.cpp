@@ -3,63 +3,35 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <Utils.hpp>
 #include <MeshFactory.hpp>
+#include "componentCreator.hpp"
 #include <modelImporter.hpp>
 #include <cmath>
+#include "componentStruct.hpp"
+
 using namespace std;
 
 #define numVAOs 1
 #define numVBOs 2
 
 
-GLuint windowTexture;
-GLuint floorTexture;
-
 GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
-struct transformData {
-    glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 projection;
-};
-
-
-struct meshData {
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<float> texCoords;
-};
 
 float aspectRatio;
 
-struct cameraData {
-    glm::vec3 cameraPos;
-    glm::vec3 cameraFront;
-    glm::vec3 cameraUp;
-};
-
-
-struct shaderData {
-    GLuint skullShader;
-};
-
-struct entityData {
-    unsigned int id;
-    entityData(unsigned int id) : id(id) {}
-};
 
 MeshFactory factory;
+
+//componentStruct component;
+
 
 float lastFrame;
 float deltaTime;
 
-void calculateDeltaTime() {
-    float currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-}
+void calculateDeltaTime();
+void init();
 
 
 int main()
@@ -112,4 +84,26 @@ int main()
     return 0;
 }
 
+void init()
+{
+
+    
+#ifdef __WIN32__
+    //cubeShader_CPT.vertexShaderPath = ".\\shaders\\vertex_shader10.glsl";
+    //cubeShader_CPT.fragmentShaderPath = ".\\shaders\\fragment_shader10.glsl";
+    Shader cube_cpt =  ComponentCreator::createShaderComponent( ".\\shaders\\vertex_shader10.glsl", ".\\shaders\\fragment_shader10.glsl");    
+
+#else
+    //cubeShader_CPT.vertexShaderPath = "./shaders/vertex_shader10.glsl";
+    //cubeShader_CPT.fragmentShaderPath = "./shaders/fragment_shader10.glsl";
+#endif
+
+    //setupMesh();
+}
+
+void calculateDeltaTime() {
+    float currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+}
 
