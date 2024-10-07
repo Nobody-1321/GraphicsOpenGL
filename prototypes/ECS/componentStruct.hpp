@@ -31,7 +31,7 @@ struct Mesh {
 
 // Componente Shader para gestionar los shaders del objeto
 struct Shader {
-    unsigned int shaderProgram{0};
+    const unsigned int shaderProgram{0};
     const std::filesystem::path vertexShaderPath;
     const std::filesystem::path fragmentShaderPath;
 
